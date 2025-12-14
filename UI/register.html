@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>NeuroFace AI - Smart Attendance System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* FIX: Ensure no scrolling and full height */
+        body, html {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevents unwanted scrollbars */
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bg-gradient {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+        }
+
+        .form-card {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Animated background */
+        .animated-bg {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at center,
+                rgba(99, 102, 241, 0.1) 0%,
+                rgba(139, 92, 246, 0.05) 30%,
+                transparent 70%
+            );
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* AI particles animation */
+        .ai-particle {
+            position: absolute;
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- NEW: SMOOTH FORM TRANSITIONS --- */
+        .form-wrapper-container {
+             position: relative;
+             width: 100%;
+             max-width: 28rem;
+             /* Needed to prevent collapse during absolute transition */
+             min-height: 650px; 
+             display: flex;
+             align-items: center;
+        }
+
+        .form-card-abs {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            /* Center vertically based on its own height */
+            transform: translateY(-50%); 
+            transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+            backface-visibility: hidden;
+        }
+
+        /* State: Active Form (Centered) */
+        .form-active {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        /* State: Hidden to the Left */
+        .form-hidden-left {
+            opacity: 0;
+            transform: translateY(-50%) translateX(-100px) scale(0.95);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* State: Hidden to the Right */
+        .form-hidden-right {
+            opacity: 0;
+            transform: translateY(-50%) translateX(100px) scale(0.95);
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* ------------------------------------ */
+
+
+        /* Logo styling */
+        .logo {
+            height: 50px;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        /* AI scan animation for images */
+        .ai-scan {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-scan::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(99, 102, 241, 0.4), 
+                transparent);
+            animation: scan 2.5s ease-in-out infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Success message animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="flex flex-col md:flex-row h-screen">
+        <div class="bg-gradient animated-bg text-white p-8 md:p-12 md:w-1/2 relative overflow-hidden">
+            <!-- AI Particles -->
+            <div class="ai-particle top-10 left-10 w-4 h-4" style="animation-delay: 0s;"></div>
+            <div class="ai-particle top-1/4 right-20 w-6 h-6" style="animation-delay: 1s;"></div>
+            <div class="ai-particle bottom-20 left-1/4 w-8 h-8" style="animation-delay: 2s;"></div>
+            <div class="ai-particle bottom-10 right-1/3 w-5 h-5" style="animation-delay: 3s;"></div>
+            
+            <div class="z-10 relative">
+                <!-- Logo -->
+                <img src="Logo.png" alt="NeuroFace AI Logo" class="logo mb-6">
+                
+                <div class="mt-20 md:mt-32">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                        Welcome to <span class="text-gradient">NeuroFace AI</span>
+                    </h1>
+                    <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-gray-300">
+                        Smart Attendance System
+                    </h2>
+                    <p class="max-w-md text-gray-400 text-lg">
+                        Revolutionize student attendance management with AI-powered facial recognition. 
+                        Experience 99.5% accuracy, real-time detection, and seamless automation.
+                    </p>
+                </div>
+            </div>
+
+            <!-- AI Visualization Image -->
+            <div class="absolute right-0 top-1/3 transform -translate-y-1/2 translate-x-1/4">
+                <div class="relative w-80 h-80">
+                    <div class="ai-scan rounded-full overflow-hidden w-full h-full">
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" 
+                             alt="AI Facial Recognition"
+                             class="w-full h-full object-cover rounded-full">
+                    </div>
+                    
+                    <!-- Animated Rings -->
+                    <div class="absolute inset-0 border-2 border-indigo-500/30 rounded-full animate-ping"></div>
+                    <div class="absolute inset-4 border-2 border-purple-500/30 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+
+            <!-- Stats at Bottom -->
+            <div class="absolute bottom-10 left-10 z-10">
+                <div class="flex space-x-8">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-gradient">99.5%</div>
+                        <div class="text-sm text-gray-400">Accuracy</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-gradient">500+</div>
+                        <div class="text-sm text-gray-400">Institutions</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-gradient">24/7</div>
+                        <div class="text-sm text-gray-400">Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 md:p-0 md:w-1/2 flex flex-col justify-center items-center relative bg-[#0a0a0a]">
+            <div class="absolute inset-0 opacity-5 pointer-events-none">
+                <div class="absolute inset-0" style="
+                    background-image: 
+                        radial-gradient(circle at 25px 25px, #6366f1 2px, transparent 0),
+                        radial-gradient(circle at 75px 75px, #8b5cf6 2px, transparent 0);
+                    background-size: 100px 100px;
+                "></div>
+            </div>
+            
+            <div class="w-full max-w-md z-10 px-4">
+                <div class="form-wrapper-container relative">
+                    
+                    <div id="loginForm" class="form-card-abs form-active form-card rounded-3xl p-8">
+                        <div class="text-right mb-6">
+                            <span class="text-gray-400 text-sm">New here?</span>
+                            <button onclick="showRegisterForm()" class="text-indigo-400 font-medium ml-2 hover:text-indigo-300 transition text-sm">
+                                Create Account
+                            </button>
+                        </div>
+
+                        <div class="mb-6">
+                            <h1 class="text-3xl font-bold">Sign In</h1>
+                            <p class="text-gray-400 mt-2 text-sm">Enter your credentials to access dashboard</p>
+                        </div>
+
+                        <form id="loginFormElement">
+                            <div class="space-y-5">
+                                <div class="space-y-2">
+                                    <label for="email" class="block text-sm font-medium text-gray-300">Email Address</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-envelope text-gray-500"></i>
+                                        </div>
+                                        <input id="email" type="email" placeholder="you@institution.edu" class="input-field w-full h-11 pl-10 pr-3 py-2 rounded-lg focus:outline-none text-white" />
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                                        <button type="button" class="text-indigo-400 text-xs hover:text-indigo-300 transition">Forgot?</button>
+                                    </div>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-lock text-gray-500"></i>
+                                        </div>
+                                        <input id="password" type="password" placeholder="••••••••" class="input-field w-full h-11 pl-10 pr-10 py-2 rounded-lg focus:outline-none text-white" />
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <button type="button" class="text-gray-500 hover:text-gray-300 focus:outline-none" onclick="togglePassword('password')">
+                                                <i class="fas fa-eye" id="password-icon"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" id="loginBtn" class="btn-primary w-full h-11 text-white font-medium rounded-lg transition duration-200 flex items-center justify-center">
+                                    <span id="loginText">Sign In</span>
+                                    <div id="loginSpinner" class="loading-spinner ml-3 hidden"></div>
+                                </button>
+
+                                <div class="relative flex items-center justify-center mt-4">
+                                    <div class="border-t border-gray-700 w-full absolute"></div>
+                                    <span class="bg-[#1e1e1e] px-3 text-xs text-gray-500 relative z-10">Or continue with</span>
+                                </div>
+
+                                <button type="button" class="btn-secondary w-full h-11 flex items-center justify-center gap-3 rounded-lg text-sm">
+                                    <i class="fab fa-google text-red-400"></i>
+                                    <span>Google</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="registerForm" class="form-card-abs form-hidden-right form-card rounded-3xl p-8">
+                        <div class="text-right mb-6">
+                            <span class="text-gray-400 text-sm">Member?</span>
+                            <button onclick="showLoginForm()" class="text-indigo-400 font-medium ml-2 hover:text-indigo-300 transition text-sm">
+                                Sign In
+                            </button>
+                        </div>
+
+                        <div class="mb-6">
+                            <h1 class="text-3xl font-bold">Get Started</h1>
+                            <p class="text-gray-400 mt-2 text-sm">Set up your institution's attendance</p>
+                        </div>
+
+                        <form id="registerFormElement">
+                            <div class="space-y-4">
+                                <div class="space-y-1">
+                                    <label for="instituteId" class="block text-sm font-medium text-gray-300">Institute ID</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-university text-gray-500"></i>
+                                        </div>
+                                        <input id="instituteId" type="text" placeholder="e.g., INST-2024" class="input-field w-full h-11 pl-10 pr-3 py-2 rounded-lg focus:outline-none text-white" />
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <label for="registerEmail" class="block text-sm font-medium text-gray-300">Official Email</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-envelope text-gray-500"></i>
+                                        </div>
+                                        <input id="registerEmail" type="email" placeholder="admin@institution.edu" class="input-field w-full h-11 pl-10 pr-3 py-2 rounded-lg focus:outline-none text-white" />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="space-y-1">
+                                        <label for="registerPassword" class="block text-sm font-medium text-gray-300">Password</label>
+                                        <input id="registerPassword" type="password" placeholder="••••••" class="input-field w-full h-11 px-3 py-2 rounded-lg focus:outline-none text-white" />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label for="confirmPassword" class="block text-sm font-medium text-gray-300">Confirm</label>
+                                        <input id="confirmPassword" type="password" placeholder="••••••" class="input-field w-full h-11 px-3 py-2 rounded-lg focus:outline-none text-white" />
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center mt-2">
+                                    <input id="terms" type="checkbox" class="h-4 w-4 rounded bg-gray-800 border-gray-700 text-indigo-600 focus:ring-indigo-500">
+                                    <label for="terms" class="ml-2 text-xs text-gray-400">
+                                        I agree to the <a href="#" class="text-indigo-400">Terms</a> & <a href="#" class="text-indigo-400">Privacy Policy</a>
+                                    </label>
+                                </div>
+
+                                <button type="submit" id="registerBtn" class="btn-primary w-full h-11 text-white font-medium rounded-lg transition duration-200 flex items-center justify-center mt-2">
+                                    <span id="registerText">Create Account</span>
+                                    <div id="registerSpinner" class="loading-spinner ml-3 hidden"></div>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="successMessage" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 hidden z-50">
+                    <div class="bg-gray-900/90 border border-green-500/30 rounded-lg p-4 shadow-2xl flex items-center backdrop-blur-sm fade-in-up">
+                        <i class="fas fa-check-circle text-green-400 mr-3 text-xl"></i>
+                        <div>
+                            <h3 class="font-medium text-green-300">Success</h3>
+                            <p class="text-sm text-green-400/80" id="successText"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // FIX: Updated Form visibility control for smooth sliding transition
+        function showLoginForm() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            // Register form slides out to the right
+            registerForm.classList.remove('form-active', 'form-hidden-left');
+            registerForm.classList.add('form-hidden-right');
+
+            // Login form slides in from the left
+            setTimeout(() => {
+                loginForm.classList.remove('form-hidden-left', 'form-hidden-right');
+                loginForm.classList.add('form-active');
+            }, 50); // Small delay to ensure transition triggers
+
+            hideSuccessMessage();
+        }
+
+        function showRegisterForm() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            // Login form slides out to the left
+            loginForm.classList.remove('form-active', 'form-hidden-right');
+            loginForm.classList.add('form-hidden-left');
+
+            // Register form slides in from the right
+            setTimeout(() => {
+                registerForm.classList.remove('form-hidden-left', 'form-hidden-right');
+                registerForm.classList.add('form-active');
+            }, 50);
+
+            hideSuccessMessage();
+        }
+
+        // Password visibility toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            // FIX: Better targeting of the icon
+            const icon = input.parentElement.querySelector('button i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Show success message (Floating notification style)
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
+            successDiv.classList.remove('hidden');
+            
+            // Auto hide after 4 seconds
+            setTimeout(() => {
+                hideSuccessMessage();
+            }, 4000);
+        }
+
+        function hideSuccessMessage() {
+            document.getElementById('successMessage').classList.add('hidden');
+        }
+
+        // Form submission handlers (Simulated)
+        document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginSpinner = document.getElementById('loginSpinner');
+            
+            // Show loading
+            loginText.textContent = 'Signing In...';
+            loginSpinner.classList.remove('hidden');
+            loginBtn.disabled = true;
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Reset button
+            loginText.textContent = 'Sign In';
+            loginSpinner.classList.add('hidden');
+            loginBtn.disabled = false;
+            
+            showSuccessMessage(`Welcome back! Redirecting to dashboard...`);
+        });
+
+        document.getElementById('registerFormElement').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+            
+            if (password !== confirmPassword) {
+                showSuccessMessage('Passwords do not match!');
+                return;
+            }
+            
+            if (!terms) {
+                showSuccessMessage('Please agree to the Terms of Service');
+                return;
+            }
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const registerText = document.getElementById('registerText');
+            const registerSpinner = document.getElementById('registerSpinner');
+            
+            // Show loading
+            registerText.textContent = 'Creating...';
+            registerSpinner.classList.remove('hidden');
+            registerBtn.disabled = true;
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Reset button
+            registerText.textContent = 'Create Account';
+            registerSpinner.classList.add('hidden');
+            registerBtn.disabled = false;
+            
+            showSuccessMessage(`Account created! Switching to login...`);
+            
+            // Switch to login form automatically after success
+            setTimeout(() => {
+                showLoginForm();
+            }, 1500);
+        });
+
+        // Initialize particles on load
+        document.addEventListener('DOMContentLoaded', function() {
+             const container = document.querySelector('.animated-bg');
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'ai-particle';
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.width = `${Math.random() * 8 + 2}px`;
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.backgroundColor = `rgba(99, 102, 241, ${Math.random() * 0.3 + 0.1})`;
+                container.appendChild(particle);
+            }
+        });
+    </script>
+</body>
+</html>
