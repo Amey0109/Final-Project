@@ -119,56 +119,110 @@
         
         /* Marquee animation */
         @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-100%); }
+        0% { transform: translateX(0%); }
+        100% { transform: translateX(-50%); } /* Changed from -100% to -50% */
+    }
+    
+    @keyframes marquee2 {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(0%); }
+    }
+    
+    .animate-marquee {
+        animation: marquee 30s linear infinite;
+        display: flex;
+        width: 200%; /* Double the width to accommodate duplicates */
+    }
+
+    .animate-marquee2 {
+        animation: marquee2 30s linear infinite;
+        position: absolute;
+        top: 0;
+        left: 100%; /* Start from the right edge */
+        min-width: 100vw; /* Ensure it takes full viewport width */
+        width: max-content;
+    }
+
+    .marquee-content {
+        display: flex;
+        white-space: nowrap;
+        flex-shrink: 0;
+        width: 100%;
+    }
+
+    /* Marquee container should take full width */
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .marquee-item {
+        margin: 0 2rem;
+        white-space: nowrap;
+    }
+
+    /* Fix for full-width marquee */
+    .marquee-overflow-container {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+    }
+
+    /* FIX: Add these styles to prevent horizontal scroll */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* FIX: Ensure all sections don't overflow */
+    section {
+        max-width: 100vw;
+        overflow: hidden;
+    }
+    
+    /* FIX: Adjust hero section to not overflow */
+    .hero-gradient {
+        max-width: 100vw;
+    }
+    
+    /* FIX: Adjust neural lines to stay within bounds */
+    .neural-line {
+        max-width: 100vw;
+    }
+
+    /* FIX: Ensure the main container doesn't cause overflow */
+    .max-w-7xl {
+        max-width: 100%;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    /* FIX: Adjust stats section for mobile */
+    @media (max-width: 768px) {
+        .flex.justify-center.space-x-12 {
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 2rem;
         }
         
-        @keyframes marquee2 {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(0%); }
+        .flex.justify-center.space-x-12 > div {
+            min-width: 45%;
         }
         
-        .animate-marquee {
-            animation: marquee 30s linear infinite;
-            min-width: 100vw; /* Ensure it takes full viewport width */
-            width: max-content;
-        }
-
-        .animate-marquee2 {
-            animation: marquee2 30s linear infinite;
-            position: absolute;
-            top: 0;
-            left: 100%; /* Start from the right edge */
-            min-width: 100vw; /* Ensure it takes full viewport width */
-            width: max-content;
-        }
-
-        /* Marquee container should take full width */
-        .marquee-container {
-            width: 100vw;
-            position: relative;
-            left: 50%;
-            right: 50%;
-            margin-left: -50vw;
-            margin-right: -50vw;
-        }
-
-        /* Fix for full-width marquee */
-        .marquee-overflow-container {
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }
-        
-        /* Stats counter animation */
         .stat-number {
+            font-size: 2.5rem;
+        }
+    }
+    
+     .stat-number {
             font-size: 3.5rem;
             line-height: 1;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
+        }   
         
         /* AI visualization effect */
         .ai-visualization {
@@ -290,7 +344,7 @@
         }
     </style>
 </head>
-<body class="bg-black text-white">
+<body class="bg-black text-white overflow-x-hidden">
     <!-- Navigation -->
     <!-- Navigation -->
 <nav id="navbar" class="fixed w-full navbar-transparent z-50">
@@ -304,6 +358,7 @@
                 <a href="#how-it-works" class="text-sm font-medium text-white hover:text-indigo-300 transition">How It Works</a>
                 <a href="#pricing" class="text-sm font-medium text-white hover:text-indigo-300 transition">Pricing</a>
                 <a href="#subscription" class="text-sm font-medium text-white hover:text-indigo-300 transition">Subscription</a>
+                <a href="#contact" class="text-sm font-medium text-white hover:text-indigo-300 transition">Contact Us</a>
                 <a href="#testimonials" class="text-sm font-medium text-white hover:text-indigo-300 transition">Testimonials</a>
                 <a href="register.html" id="Signinbtn"
                 class="px-6 py-2 bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition rounded">
@@ -392,42 +447,26 @@
         </div>
     </section>
 
-    <!-- Trusted By Section -->
+
+<!-- Trusted By Section -->
 <section class="py-16 bg-gradient overflow-hidden">
     <div class="marquee-container">
         <p class="text-center text-sm font-medium text-indigo-300 mb-8 tracking-widest uppercase">Trusted by Leading Educational Institutions Worldwide</p>
         
-        <div class="marquee-overflow-container">
-            <div class="flex">
-                <!-- First set -->
-                <div class="flex animate-marquee whitespace-nowrap py-4">
-                    <div class="mx-8 text-4xl font-display text-gradient">Universities</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Colleges</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Schools</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Training Centers</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Corporate Training</div>
-                    <!-- Duplicate items to ensure seamless transition -->
-                    <div class="mx-8 text-4xl font-display text-gradient">Universities</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Colleges</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Schools</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Training Centers</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Corporate Training</div>
-                </div>
-                <!-- Duplicate for seamless loop -->
-                <div class="flex animate-marquee2 whitespace-nowrap py-4">
-                    <div class="mx-8 text-4xl font-display text-gradient">Universities</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Colleges</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Schools</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Training Centers</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Corporate Training</div>
-                    <!-- Duplicate items to ensure seamless transition -->
-                    <div class="mx-8 text-4xl font-display text-gradient">Universities</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Colleges</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Schools</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Training Centers</div>
-                    <div class="mx-8 text-4xl font-display text-gradient">Corporate Training</div>
-                </div>
-            </div>
+        <div class="marquee-content animate-marquee">
+            <!-- First set -->
+            <div class="marquee-item text-4xl font-display text-gradient">Universities</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Colleges</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Schools</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Training Centers</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Corporate Training</div>
+            
+            <!-- Duplicate set for seamless loop -->
+            <div class="marquee-item text-4xl font-display text-gradient">Universities</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Colleges</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Schools</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Training Centers</div>
+            <div class="marquee-item text-4xl font-display text-gradient">Corporate Training</div>
         </div>
     </div>
 </section>
@@ -504,137 +543,6 @@
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="py-24 px-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16 scroll-reveal">
-                <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Simple, Transparent <span class="text-gradient">Pricing</span></h2>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto">Choose the perfect plan for your institution. No hidden fees, cancel anytime.</p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Basic Plan -->
-                <div class="pricing-card scroll-reveal p-8 rounded-xl">
-                    <h3 class="font-display text-2xl font-semibold mb-2">Basic</h3>
-                    <p class="text-gray-400 mb-6">Perfect for small classrooms</p>
-                    <div class="mb-6">
-                        <span class="text-5xl font-bold text-white">$29</span>
-                        <span class="text-gray-400">/month</span>
-                    </div>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Up to 50 students</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Real-time face detection</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Basic analytics</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Email support</span>
-                        </li>
-                    </ul>
-                    <button class="w-full py-3 border border-indigo-600 text-indigo-400 font-medium rounded-lg hover:bg-indigo-600/10 transition">
-                        Get Started
-                    </button>
-                </div>
-
-                <!-- Professional Plan (Featured) -->
-                <div class="pricing-card pricing-card-popular scroll-reveal p-8 rounded-xl transform scale-105 relative">
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white text-sm font-semibold px-4 py-1 rounded-full">
-                        MOST POPULAR
-                    </div>
-                    <h3 class="font-display text-2xl font-semibold mb-2">Professional</h3>
-                    <p class="text-gray-400 mb-6">For growing institutions</p>
-                    <div class="mb-6">
-                        <span class="text-5xl font-bold text-white">$79</span>
-                        <span class="text-gray-400">/month</span>
-                    </div>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Up to 200 students</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Advanced face recognition</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Advanced analytics & reports</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Priority support</span>
-                        </li>
-                    </ul>
-                    <button class="w-full btn-primary py-3 text-white font-medium rounded-lg">
-                        Start Free Trial
-                    </button>
-                </div>
-
-                <!-- Enterprise Plan -->
-                <div class="pricing-card scroll-reveal p-8 rounded-xl">
-                    <h3 class="font-display text-2xl font-semibold mb-2">Enterprise</h3>
-                    <p class="text-gray-400 mb-6">For large institutions</p>
-                    <div class="mb-6">
-                        <span class="text-5xl font-bold text-white">Custom</span>
-                    </div>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Unlimited students</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Multi-campus support</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Custom AI models</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Dedicated account manager</span>
-                        </li>
-                    </ul>
-                    <button class="w-full py-3 border border-indigo-600 text-indigo-400 font-medium rounded-lg hover:bg-indigo-600/10 transition">
-                        Contact Sales
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Subscription Plan Section -->
     <section id="subscription" class="py-24 bg-gradient px-6">
         <div class="max-w-7xl mx-auto">
@@ -650,7 +558,7 @@
                         <h3 class="font-display text-2xl font-semibold mb-2">Monthly Subscription</h3>
                         <p class="text-gray-400 mb-6">Pay as you go, cancel anytime</p>
                         <div class="mb-6">
-                            <span class="text-5xl font-bold text-white">$79</span>
+                            <span class="text-5xl font-bold text-white">₹5000</span>
                             <span class="text-gray-400">/month</span>
                         </div>
                         <ul class="space-y-3 mb-8">
@@ -673,7 +581,7 @@
                                 <span>Monthly billing</span>
                             </li>
                         </ul>
-                        <button class="w-full py-3 border border-indigo-600 text-indigo-400 font-medium rounded-lg hover:bg-indigo-600/10 transition">
+                        <button onclick="window.location.href='subscription_form.html'" class="w-full py-3 border border-indigo-600 text-indigo-400 font-medium rounded-lg hover:bg-indigo-600/10 transition">
                             Choose Monthly Plan
                         </button>
                     </div>
@@ -685,9 +593,9 @@
                         <h3 class="font-display text-2xl font-semibold mb-2">Annual Subscription</h3>
                         <p class="text-gray-400 mb-6">Best value for institutions</p>
                         <div class="mb-6">
-                            <span class="text-5xl font-bold text-white">$758</span>
+                            <span class="text-5xl font-bold text-white">₹50,000</span>
                             <span class="text-gray-400">/year</span>
-                            <div class="text-gray-400 text-sm">Billed as $63/month</div>
+                            <div class="text-gray-400 text-sm">Billed as ₹4000/month</div>
                         </div>
                         <ul class="space-y-3 mb-8">
                             <li class="flex items-start">
@@ -709,7 +617,7 @@
                                 <span>Priority feature requests</span>
                             </li>
                         </ul>
-                        <button class="w-full btn-primary py-3 text-white font-medium rounded-lg">
+                        <button onclick="window.location.href='subscription_form.html'" class="w-full btn-primary py-3 text-white font-medium rounded-lg">
                             Choose Annual Plan
                         </button>
                     </div>
@@ -718,6 +626,234 @@
             
             <div class="mt-12 text-center text-gray-400 max-w-3xl mx-auto">
                 <p>All subscription plans include: Automatic updates • Premium support • Security updates • Data backup • No long-term contracts required</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us -->
+    <section id="contact" class="py-24 px-6 bg-gradient">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Get In <span class="text-gradient">Touch</span></h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">Have questions about NeuroFace AI? Contact our team for a personalized demo or consultation.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
+                <!-- Contact Info -->
+                <div class="bg-gray-900 md:col-span-5 p-10 text-white">
+                    <p class="mt-4 text-sm leading-7 font-medium tracking-widest text-indigo-400 uppercase">
+                        Contact Us
+                    </p>
+                    <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight mt-2">
+                        Ready to Transform Your <span class="text-indigo-400">Attendance</span> System?
+                    </h3>
+                    <p class="mt-6 leading-7 text-gray-300">
+                        Get in touch with our AI experts to discuss how NeuroFace AI can streamline attendance management for your institution. We're here to help you implement a smarter solution.
+                    </p>
+
+                    <div class="space-y-8 mt-10">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-indigo-600/20 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg class="h-6 text-indigo-400" fill="currentColor" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 489.536 489.536"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 489.536 489.536">
+                                    <g>
+                                        <g>
+                                            <path
+                                                d="m488.554,476l-99-280.2c-1-4.2-5.2-7.3-9.4-7.3h-45.6c12.9-31.1 19.6-54.9 19.6-70.8 0-64.6-50-117.7-112.5-117.7-61.5,0-112.5,52.1-112.5,117.7 0,17.6 8.2,43.1 19.9,70.8h-39.7c-4.2,0-8.3,3.1-9.4,7.3l-99,280.2c-3.2,10.3 6.3,13.5 9.4,13.5h468.8c4.2,0.5 12.5-4.2 9.4-13.5zm-246.9-455.3c51,1.06581e-14 91.7,43.7 91.7,96.9 0,56.5-79.2,182.3-91.7,203.1-31.3-53.1-91.7-161.5-91.7-203.1 0-53.1 40.6-96.9 91.7-96.9zm-216.7,448l91.7-259.4h41.7c29.9,64.1 83.3,151 83.3,151s81.4-145.7 83.8-151h47.4l91.7,259.4h-439.6z">
+                                            </path>
+                                            <rect width="136.5" x="177.054" y="379.1" height="20.8"></rect>
+                                            <path
+                                                d="m289.554,108.2c0-26-21.9-47.9-47.9-47.9s-47.9,21.9-47.9,47.9 20.8,47.9 47.9,47.9c27.1,0 47.9-21.8 47.9-47.9zm-75-1c0-14.6 11.5-27.1 27.1-27.1s27.1,12.5 27.1,27.1-11.5,27.1-27.1,27.1c-14.6,2.84217e-14-27.1-12.5-27.1-27.1z">
+                                            </path>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-1">Visit Our Office</h4>
+                                <p class="text-gray-300 text-sm">AI Research Park, Tech Street<br>Bangalore, Karnataka 560001</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-indigo-600/20 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg class="h-6 text-indigo-400" fill="currentColor" version="1.1" id="Capa_1"
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                    viewBox="0 0 60.002 60.002" style="enable-background:new 0 0 60.002 60.002;" xml:space="preserve">
+                                    <g>
+                                        <path d="M59.002,37.992c-3.69,0-6.693-3.003-6.693-6.693c0-0.553-0.447-1-1-1s-1,0.447-1,1c0,4.794,3.899,8.693,8.693,8.693
+		c0.553,0,1-0.447,1-1S59.554,37.992,59.002,37.992z">
+                                        </path>
+                                        <path d="M58.256,35.65c0.553,0,1-0.447,1-1s-0.447-1-1-1c-0.886,0-1.605-0.72-1.605-1.605c0-0.553-0.447-1-1-1s-1,0.447-1,1
+		C54.65,34.033,56.267,35.65,58.256,35.65z">
+                                        </path>
+                                        <path d="M20.002,2.992c3.691,0,6.693,3.003,6.693,6.693c0,0.553,0.448,1,1,1s1-0.447,1-1c0-4.794-3.9-8.693-8.693-8.693
+		c-0.552,0-1,0.447-1,1S19.449,2.992,20.002,2.992z">
+                                        </path>
+                                        <path d="M19.748,6.334c0,0.553,0.448,1,1,1c0.885,0,1.604,0.72,1.604,1.605c0,0.553,0.448,1,1,1s1-0.447,1-1
+		c0-1.988-1.617-3.605-3.604-3.605C20.196,5.334,19.748,5.781,19.748,6.334z">
+                                        </path>
+                                        <path d="M44.076,37.889c-1.276-0.728-2.597-0.958-3.721-0.646c-0.844,0.234-1.532,0.768-1.996,1.546
+		c-1.02,1.22-2.286,2.646-2.592,2.867c-2.367,1.604-4.25,1.415-6.294-0.629L17.987,29.542c-2.045-2.045-2.233-3.928-0.631-6.291
+		c0.224-0.31,1.65-1.575,2.87-2.596c0.778-0.464,1.312-1.152,1.546-1.996c0.311-1.123,0.082-2.444-0.652-3.731
+		c-0.173-0.296-4.291-7.27-8.085-9.277c-1.926-1.019-4.255-0.669-5.796,0.872L4.7,9.059c-4.014,4.014-5.467,8.563-4.321,13.52
+		c0.956,4.132,3.742,8.529,8.282,13.068l14.705,14.706c5.762,5.762,11.258,8.656,16.298,8.656c3.701,0,7.157-1.562,10.291-4.695
+		l2.537-2.537c1.541-1.541,1.892-3.87,0.872-5.796C51.356,42.186,44.383,38.069,44.076,37.889z M51.078,50.363L48.541,52.9
+		c-6.569,6.567-14.563,5.235-23.76-3.961L10.075,34.233c-4.271-4.271-6.877-8.344-7.747-12.104
+		c-0.995-4.301,0.244-8.112,3.786-11.655l2.537-2.537c0.567-0.566,1.313-0.862,2.07-0.862c0.467,0,0.939,0.112,1.376,0.344
+		c3.293,1.743,7.256,8.454,7.29,8.511c0.449,0.787,0.62,1.608,0.457,2.196c-0.1,0.36-0.324,0.634-0.684,0.836l-0.15,0.104
+		c-0.853,0.712-2.883,2.434-3.308,3.061c-0.612,0.904-1.018,1.792-1.231,2.665c-0.711-1.418-1.286-3.06-1.475-4.881
+		c-0.057-0.548-0.549-0.935-1.098-0.892c-0.549,0.058-0.949,0.549-0.892,1.099c0.722,6.953,6.129,11.479,6.359,11.668
+		c0.025,0.02,0.054,0.028,0.08,0.045l10.613,10.613c0.045,0.045,0.092,0.085,0.137,0.129c0.035,0.051,0.058,0.108,0.104,0.154
+		c0.189,0.187,4.704,4.567,11.599,5.283c0.035,0.003,0.07,0.005,0.104,0.005c0.506,0,0.94-0.383,0.994-0.896
+		c0.057-0.55-0.342-1.041-0.892-1.099c-2.114-0.219-3.987-0.839-5.548-1.558c0.765-0.23,1.543-0.612,2.332-1.146
+		c0.628-0.426,2.35-2.455,3.061-3.308l0.104-0.151c0.202-0.359,0.476-0.583,0.836-0.684c0.588-0.159,1.409,0.008,2.186,0.45
+		c0.067,0.04,6.778,4.003,8.521,7.296C52.202,48.062,51.994,49.447,51.078,50.363z">
+                                        </path>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-1">Call Us</h4>
+                                <p class="text-gray-300 text-sm">+91 98765 43210<br>+91 98765 43211</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-indigo-600/20 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg class="h-6 text-indigo-400" fill="currentColor" version="1.1" id="Capa_1"
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                    viewBox="0 0 300.988 300.988" style="enable-background:new 0 0 300.988 300.988;"
+                                    xml:space="preserve">
+                                    <g>
+                                        <g>
+                                            <path d="M150.494,0.001C67.511,0.001,0,67.512,0,150.495s67.511,150.493,150.494,150.493s150.494-67.511,150.494-150.493
+                S233.476,0.001,150.494,0.001z M150.494,285.987C75.782,285.987,15,225.206,15,150.495S75.782,15.001,150.494,15.001
+                s135.494,60.782,135.494,135.493S225.205,285.987,150.494,285.987z">
+                                            </path>
+                                            <polygon
+                                                points="142.994,142.995 83.148,142.995 83.148,157.995 157.994,157.995 157.994,43.883 142.994,43.883 		">
+                                            </polygon>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-1">Working Hours</h4>
+                                <p class="text-gray-300 text-sm">Monday - Friday: 9:00 - 18:00<br>Support: 24/7 Emergency</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12">
+                        <h4 class="font-semibold text-lg mb-4">Follow Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-indigo-600/20 rounded-full flex items-center justify-center hover:bg-indigo-600/40 transition">
+                                <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                                </svg>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-indigo-600/20 rounded-full flex items-center justify-center hover:bg-indigo-600/40 transition">
+                                <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2 16h-2v-6h2v6zm-1-6.891c-.607 0-1.1-.496-1.1-1.109 0-.612.492-1.109 1.1-1.109s1.1.497 1.1 1.109c0 .613-.493 1.109-1.1 1.109zm8 6.891h-1.998v-2.861c0-1.881-2.002-1.722-2.002 0v2.861h-2v-6h2v1.093c.872-1.616 4-1.736 4 1.548v3.359z"/>
+                                </svg>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-indigo-600/20 rounded-full flex items-center justify-center hover:bg-indigo-600/40 transition">
+                                <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <form action="#" method="post" class="bg-gray-800 md:col-span-7 p-10">
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                            <label class="block uppercase tracking-wide text-gray-300 text-sm font-bold mb-2"
+                                for="first-name">
+                                First Name
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-900 text-white border border-gray-700 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-indigo-500 focus:bg-gray-800 transition"
+                                id="first-name" type="text" placeholder="John" required>
+                            <p class="text-red-400 text-xs italic hidden">Please fill out this field.</p>
+                        </div>
+                        <div class="w-full md:w-1/2 px-3">
+                            <label class="block uppercase tracking-wide text-gray-300 text-sm font-bold mb-2"
+                                for="last-name">
+                                Last Name
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-900 text-white border border-gray-700 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:border-indigo-500 focus:bg-gray-800 transition"
+                                id="last-name" type="text" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full px-3">
+                            <label class="block uppercase tracking-wide text-gray-300 text-sm font-bold mb-2"
+                                for="email">
+                                Email Address
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-900 text-white border border-gray-700 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-indigo-500 focus:bg-gray-800 transition"
+                                id="email" type="email" placeholder="john.doe@example.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full px-3">
+                            <label class="block uppercase tracking-wide text-gray-300 text-sm font-bold mb-2"
+                                for="institution">
+                                Institution Name
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-900 text-white border border-gray-700 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-indigo-500 focus:bg-gray-800 transition"
+                                id="institution" type="text" placeholder="University/College Name" required>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full px-3">
+                            <label class="block uppercase tracking-wide text-gray-300 text-sm font-bold mb-2"
+                                for="message">
+                                Your Message
+                            </label>
+                            <textarea rows="6"
+                                class="appearance-none block w-full bg-gray-900 text-white border border-gray-700 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-indigo-500 focus:bg-gray-800 transition"
+                                id="message" placeholder="Tell us about your requirements..."></textarea>
+                        </div>
+                        
+                        <div class="flex justify-between w-full px-3">
+                            <div class="md:flex md:items-center">
+                                <label class="flex items-center text-gray-300 font-medium cursor-pointer">
+                                    <input class="mr-2 leading-tight w-4 h-4 text-indigo-600 bg-gray-900 border-gray-700 rounded focus:ring-indigo-500 focus:ring-2" 
+                                           type="checkbox">
+                                    <span class="text-sm">
+                                        Send me product updates & newsletter
+                                    </span>
+                                </label>
+                            </div>
+                            <button
+                                class="btn-primary px-8 py-3 text-white font-semibold rounded-lg hover:shadow-xl transition-all duration-300"
+                                type="submit">
+                                Send Message
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-700 px-3">
+                        <p class="text-gray-400 text-sm text-center">
+                            Or contact us directly at: 
+                            <a href="mailto:contact@neurofaceai.com" class="text-indigo-400 hover:text-indigo-300 font-medium">
+                                contact@neurofaceai.com
+                            </a>
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
