@@ -1,18 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database import SessionLocal
-from models import Institute
-from schemas import InstituteCreate
+from database import SessionLocal, get_db
+from models.institute import Institute
+from schemas.institute import InstituteCreate
 
 router = APIRouter(prefix="/register-institute", tags=["Institute"])
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/")
 def register_institute(data: InstituteCreate, db: Session = Depends(get_db)):

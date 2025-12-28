@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from database import engine, Base
+
+#routers
 from routers import institute
+from routers import contact
 
 app = FastAPI(title="NeuroFace AI API")
 
@@ -17,5 +19,5 @@ app.add_middleware(
 )
 
 app.include_router(institute.router)
-
+app.include_router(contact.router)
 
