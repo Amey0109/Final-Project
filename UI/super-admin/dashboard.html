@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroFace AI - Super Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="./main.js"></script>
+    <link rel="stylesheet" href="./main.css">
+</head>
+<body class="dark">
+    <!-- Main Container -->
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar-glass w-60 flex-shrink-0 p-4 hidden md:block">
+            <div class="sidebar-logo-container mb-8">
+                <img src="../Logo.png" alt="NeuroFace AI Logo" class="logo-img">
+                <div class="mt-2">
+                    <p class="panel-text">SUPER ADMIN PANEL</p>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <a href="#" class="nav-link flex items-center space-x-3 p-3 active" onclick="showSection('dashboard')">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('institutes')">
+                    <i class="fas fa-university w-5"></i>
+                    <span>Institute Management</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('users')">
+                    <i class="fas fa-users w-5"></i>
+                    <span>User Management</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('subscriptions')">
+                    <i class="fas fa-credit-card w-5"></i>
+                    <span>Subscription Plans</span>
+                </a>
+                <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('profile')">
+                    <i class="fas fa-user-circle w-5"></i>
+                    <span>My Profile</span>
+                </a>
+            </nav>
+
+            <!-- Divider -->
+            <div class="my-6 border-t border-gray-800"></div>
+            
+            <!-- Sidebar Footer -->
+            <div class="absolute bottom-4 left-4 right-4">
+                <button onclick="logout()" class="w-full p-3 rounded-lg border border-red-500 text-red-400 hover:bg-red-900/30 transition">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    <span>Logout</span>
+                </button>
+                <br><br>
+                <div class="text-center text-xs text-gray-500">
+                    <p>NeuroFace AI v2.0</p>
+                    <p class="mt-1">© 2026 All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Header -->
+        <div class="md:hidden navbar p-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-bars text-white"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="../Logo.png" alt="NeuroFace AI Logo" class="h-8">
+                        <h1 class="text-lg font-bold text-white neuroface-gradient">NeuroFace AI</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="mobileThemeToggle" class="theme-toggle">
+                        <i class="fas fa-moon text-white"></i>
+                    </button>
+                    <button onclick="logout()" class="logout-btn">
+                        <i class="fas fa-sign-out-alt text-red-400"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Sidebar -->
+        <div id="mobileSidebar" class="fixed inset-0 z-40 md:hidden hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50" onclick="toggleSidebar()"></div>
+            <div class="absolute left-0 top-0 bottom-0 mobile-menu w-64 p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-3">
+                        <img src="../Logo.png" alt="NeuroFace AI Logo" class="h-10">
+                        <div>
+                            <h1 class="text-lg font-bold text-white">NeuroFace AI</h1>
+                            <p class="text-xs text-gray-400">Super Admin</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-times text-white"></i>
+                    </button>
+                </div>
+                
+                <!-- User Info -->
+                <div class="p-4 mb-6 rounded-lg gradient-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-user-shield text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium" id="mobileAdminName">Loading...</h3>
+                            <p class="text-xs text-indigo-300">Super Admin</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation links -->
+                <nav class="space-y-2">
+                    <a href="#" class="nav-link flex items-center space-x-3 p-3 active" onclick="showSection('dashboard'); toggleSidebar();">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('institutes'); toggleSidebar();">
+                        <i class="fas fa-university w-5"></i>
+                        <span>Institute Management</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('users'); toggleSidebar();">
+                        <i class="fas fa-users w-5"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('subscriptions'); toggleSidebar();">
+                        <i class="fas fa-credit-card w-5"></i>
+                        <span>Subscription Plans</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('ai'); toggleSidebar();">
+                        <i class="fas fa-robot w-5"></i>
+                        <span>AI Management</span>
+                    </a>
+            
+                    <a href="#" class="nav-link flex items-center space-x-3 p-3" onclick="showSection('profile'); toggleSidebar();">
+                        <i class="fas fa-user-circle w-5"></i>
+                        <span>My Profile</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header Navbar -->
+            <div class="navbar p-4 hidden md:block">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold neuroface-gradient" id="sectionTitle">Dashboard Overview</h2>
+                        <p class="text-sm text-gray-400" id="sectionSubtitle">Welcome back, Super Admin</p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Quick Actions -->
+                        <div class="flex items-center space-x-2">
+                            <button onclick="refreshCharts()" class="p-2 rounded-lg hover:bg-gray-800" title="Refresh">
+                                <i class="fas fa-sync-alt text-gray-400"></i>
+                            </button>
+                            <button onclick="toggleFullscreen()" class="p-2 rounded-lg hover:bg-gray-800" title="Fullscreen">
+                                <i class="fas fa-expand text-gray-400"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="text-right">
+                            <div class="font-semibold" id="currentTime">Loading...</div>
+                            <div class="text-sm text-gray-400" id="currentDate">Loading...</div>
+                        </div>
+
+                        <!-- Notifications -->
+                        <div class="relative">
+                            <button onclick="toggleNotifications()" class="p-2 rounded-lg hover:bg-gray-800 relative">
+                                <i class="fas fa-bell text-gray-400"></i>
+                                <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center pulse" id="notificationCount">0</span>
+                            </button>
+                            <div id="notificationsPanel" class="absolute right-0 mt-2 w-80 glass-card rounded-lg shadow-xl hidden z-50">
+                                <!-- Notifications will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Theme Toggle (Moved to Navbar) -->
+                        <button id="themeToggle" class="theme-toggle">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
+                        
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-800">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                                    <i class="fas fa-user-shield text-white text-sm"></i>
+                                </div>
+                                <div class="text-left hidden md:block">
+                                    <p class="text-sm font-medium" id="adminName">Loading...</p>
+                                    <p class="text-xs text-gray-400">Super Admin</p>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                            </button>
+                            <div id="userDropdown" class="absolute right-0 mt-2 w-48 user-dropdown rounded-lg shadow-xl hidden z-50">
+                                <div class="p-4 border-b border-gray-800">
+                                    <p class="font-medium" id="dropdownAdminName">Loading...</p>
+                                    <p class="text-xs text-gray-400" id="dropdownAdminEmail">superadmin@neuroface.ai</p>
+                                </div>
+                                <div class="p-2">
+                                    <a href="#" onclick="showSection('profile'); toggleUserDropdown(); return false;" class="flex items-center space-x-3 p-2 rounded hover:bg-gray-800">
+                                        <i class="fas fa-user-circle text-gray-400 w-5"></i>
+                                        <span>My Profile</span>
+                                    </a>
+                                    <div class="border-t border-gray-800 mt-2 pt-2">
+                                        <!-- Logout Button (Moved to Navbar) -->
+                                        <button onclick="logout()" class="w-full flex items-center space-x-3 p-2 rounded hover:bg-red-900/30 text-red-400">
+                                            <i class="fas fa-sign-out-alt w-5"></i>
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="flex-1 overflow-auto p-4 md:p-6">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="fade-in">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">Total Institutes</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="totalInstitutes">0</h3>
+                                    <p class="text-green-400 text-sm" id="instituteGrowth">
+                                        <i class="fas fa-arrow-up mr-1"></i>0% growth
+                                    </p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-900/30 to-indigo-900/10 flex items-center justify-center">
+                                    <i class="fas fa-university text-indigo-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">Total Users</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="totalUsers">0</h3>
+                                    <p class="text-blue-400 text-sm" id="userBreakdown">0 Admin, 0 Faculty, 0 Student</p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-900/30 to-green-900/10 flex items-center justify-center">
+                                    <i class="fas fa-users text-green-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">Monthly Revenue</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="monthlyRevenue">₹0</h3>
+                                    <p class="text-yellow-400 text-sm" id="revenueGrowth">
+                                        <i class="fas fa-arrow-up mr-1"></i>0% growth
+                                    </p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-900/30 to-yellow-900/10 flex items-center justify-center">
+                                    <i class="fas fa-rupee-sign text-yellow-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">AI Usage</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="aiUsage">0</h3>
+                                    <p class="text-purple-400 text-sm" id="aiAccuracy">
+                                        <i class="fas fa-bolt mr-1"></i>0% accuracy
+                                    </p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-900/30 to-purple-900/10 flex items-center justify-center">
+                                    <i class="fas fa-robot text-purple-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Second Row Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- ACTIVE SUBSCRIPTIONS CARD - UPDATED -->
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">Active Subscriptions</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="activeSubscriptions">0</h3>
+                                    <p class="text-gray-400 text-sm" id="subscriptionDistribution">0 Monthly, 0 Annual</p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-900/30 to-blue-900/10 flex items-center justify-center">
+                                    <i class="fas fa-certificate text-blue-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">Pending Payments</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="pendingPayments">0</h3>
+                                    <p class="text-red-400 text-sm" id="pendingAmount">₹0 total</p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-900/30 to-red-900/10 flex items-center justify-center">
+                                    <i class="fas fa-clock text-red-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card stat-card rounded-xl p-6 neon-glow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-400 text-sm mb-2">Active / Inactive</p>
+                                    <h3 class="text-3xl font-bold mb-1" id="activeInactive">0 / 0</h3>
+                                    <p class="text-gray-400 text-sm">Institutes status</p>
+                                </div>
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-900/30 to-gray-900/10 flex items-center justify-center">
+                                    <i class="fas fa-chart-pie text-gray-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <!-- Monthly Registrations Chart -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-1">Monthly Registrations</h3>
+                                    <p class="text-gray-400 text-sm">New institutes per month</p>
+                                </div>
+                                <select id="chartPeriod" class="input-dark rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="loadCharts()">
+                                    <option value="6">Last 6 months</option>
+                                    <option value="12" selected>Last 12 months</option>
+                                    <option value="24">Last 2 years</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="registrationsChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Subscription Distribution Chart -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-1">Subscription Distribution</h3>
+                                    <p class="text-gray-400 text-sm">Plan-wise institute count</p>
+                                </div>
+                                <div class="flex space-x-2 chart-buttons">
+                                    <button onclick="refreshCharts()" class="p-2 rounded-lg hover:bg-gray-800 transition-all duration-200">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <button onclick="exportChart('subscriptionChart')" class="p-2 rounded-lg hover:bg-gray-800 transition-all duration-200">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="subscriptionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <!-- Institute Management Section -->
+                <div id="institutesSection" class="hidden fade-in">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+
+                <!-- User Management Section -->
+                <div id="usersSection" class="hidden fade-in">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+
+                <!-- Profile Management Section -->
+                <div id="profileSection" class="hidden fade-in">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="mb-8">
+                            <h3 class="text-2xl font-bold neuroface-gradient">My Profile</h3>
+                            <p class="text-gray-400">Manage your account information and security</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Left Column - Profile Info -->
+                            <div class="lg:col-span-2">
+                                <div class="glass-card rounded-2xl p-6 mb-6">
+                                    <h4 class="text-lg font-semibold mb-6 pb-4 border-b border-gray-800">Personal Information</h4>
+                                    
+                                    <form id="profileForm">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Full Name</label>
+                                                <input type="text" id="profileName" 
+                                                       class="input-dark w-full rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                                       placeholder="Enter your display name">
+                                                <p class="text-xs text-gray-400 mt-2">This name will be displayed throughout the dashboard</p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Email Address</label>
+                                                <input type="email" id="profileEmail" 
+                                                       class="input-dark w-full rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                                       placeholder="Enter your email">
+                                                <p class="text-xs text-gray-400 mt-2">Your login email address</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Role</label>
+                                                <div class="input-dark w-full rounded-lg px-4 py-3">
+                                                    <span class="font-medium">Super Administrator</span>
+                                                    <p class="text-xs text-gray-400 mt-1">Highest privilege level</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Account Created</label>
+                                                <div class="input-dark w-full rounded-lg px-4 py-3">
+                                                    <span class="font-medium" id="profileCreatedAt">Loading...</span>
+                                                    <p class="text-xs text-gray-400 mt-1">Date when account was created</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex justify-end space-x-3">
+                                            <button type="button" onclick="updateProfileName()" 
+                                                    class="px-6 py-3 rounded-lg border border-indigo-500 text-indigo-400 hover:bg-indigo-900/30 transition">
+                                                <i class="fas fa-user-edit mr-2"></i>Save Name Only
+                                            </button>
+                                            <button type="button" onclick="updateEmail()" 
+                                                    class="px-6 py-3 rounded-lg btn-primary">
+                                                <i class="fas fa-save mr-2"></i>Update Email
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Password Change Section -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <h4 class="text-lg font-semibold mb-6 pb-4 border-b border-gray-800">Change Password</h4>
+                                    
+                                    <form id="passwordForm">
+                                        <div class="space-y-4 mb-6">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Current Password</label>
+                                                <div class="relative">
+                                                    <input type="password" id="currentPassword" 
+                                                           class="input-dark w-full rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-10"
+                                                           placeholder="Enter current password" required>
+                                                    <button type="button" onclick="togglePasswordVisibility('currentPassword')" 
+                                                            class="absolute right-3 top-3 text-gray-400 hover:text-indigo-400">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">New Password</label>
+                                                <div class="relative">
+                                                    <input type="password" id="newPassword" 
+                                                           class="input-dark w-full rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-10"
+                                                           placeholder="Enter new password" required>
+                                                    <button type="button" onclick="togglePasswordVisibility('newPassword')" 
+                                                            class="absolute right-3 top-3 text-gray-400 hover:text-indigo-400">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="flex items-center space-x-2 mb-1">
+                                                        <div id="passwordStrength" class="h-2 flex-1 rounded-full bg-gray-700"></div>
+                                                        <span id="passwordStrengthText" class="text-xs text-gray-400">Weak</span>
+                                                    </div>
+                                                    <ul class="text-xs text-gray-400 space-y-1">
+                                                        <li id="lengthCheck" class="flex items-center">
+                                                            <i class="fas fa-times text-red-400 mr-2 text-xs"></i>
+                                                            <span>At least 8 characters</span>
+                                                        </li>
+                                                        <li id="uppercaseCheck" class="flex items-center">
+                                                            <i class="fas fa-times text-red-400 mr-2 text-xs"></i>
+                                                            <span>At least one uppercase letter</span>
+                                                        </li>
+                                                        <li id="numberCheck" class="flex items-center">
+                                                            <i class="fas fa-times text-red-400 mr-2 text-xs"></i>
+                                                            <span>At least one number</span>
+                                                        </li>
+                                                        <li id="specialCheck" class="flex items-center">
+                                                            <i class="fas fa-times text-red-400 mr-2 text-xs"></i>
+                                                            <span>At least one special character</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Confirm New Password</label>
+                                                <div class="relative">
+                                                    <input type="password" id="confirmPassword" 
+                                                           class="input-dark w-full rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-10"
+                                                           placeholder="Confirm new password" required>
+                                                    <button type="button" onclick="togglePasswordVisibility('confirmPassword')" 
+                                                            class="absolute right-3 top-3 text-gray-400 hover:text-indigo-400">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <p id="passwordMatch" class="text-xs text-green-400 mt-2 hidden">
+                                                    <i class="fas fa-check mr-1"></i>
+                                                    Passwords match
+                                                </p>
+                                                <p id="passwordMismatch" class="text-xs text-red-400 mt-2 hidden">
+                                                    <i class="fas fa-times mr-1"></i>
+                                                    Passwords do not match
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex justify-end">
+                                            <button type="button" onclick="changePassword()" 
+                                                    class="px-6 py-3 rounded-lg btn-primary">
+                                                <i class="fas fa-key mr-2"></i>Update Password
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column - Profile Summary -->
+                            <div>
+                                <div class="glass-card rounded-2xl p-6 mb-6">
+                                    <h4 class="text-lg font-semibold mb-6">Profile Summary</h4>
+                                    
+                                    <div class="flex flex-col items-center mb-6">
+                                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-4">
+                                            <i class="fas fa-user-shield text-white text-3xl"></i>
+                                        </div>
+                                        <h5 class="text-xl font-bold" id="profileDisplayName">Loading...</h5>
+                                        <p class="text-gray-400" id="profileDisplayEmail">superadmin@neuroface.ai</p>
+                                        <span class="mt-2 px-3 py-1 rounded-full text-xs bg-indigo-900/30 text-indigo-400">
+                                            Super Administrator
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-400">Last Login</span>
+                                            <span class="font-medium" id="profileLastLogin">Just now</span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-400">Theme Preference</span>
+                                            <span class="font-medium" id="profileTheme">Dark</span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-400">Account Status</span>
+                                            <span class="px-2 py-1 rounded text-xs bg-green-900/30 text-green-400">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Danger Zone -->
+                                <div class="glass-card rounded-2xl p-6 border border-red-900/30">
+                                    <h4 class="text-lg font-semibold mb-4 text-red-400">Danger Zone</h4>
+                                    <p class="text-sm text-gray-400 mb-4">Irreversible actions. Proceed with caution.</p>
+                                    
+                                    <div class="space-y-3">                                  
+                                        <button onclick="showDeleteAccountModal()" 
+                                                class="w-full text-left p-3 rounded-lg border border-red-500 text-red-400 hover:bg-red-900/10 transition">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <i class="fas fa-trash-alt mr-2"></i>
+                                                    Delete Account
+                                                </div>
+                                                <i class="fas fa-chevron-right text-xs"></i>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription Plans Section -->
+                <div id="subscriptionsSection" class="hidden fade-in">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+
+            
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 p-4 rounded-lg shadow-lg max-w-sm hidden success-toast z-50"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="glass-card rounded-2xl p-8 flex flex-col items-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-white">Loading...</p>
+        </div>
+    </div>
+</body>
+</html>

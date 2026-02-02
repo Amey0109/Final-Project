@@ -1,0 +1,677 @@
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        --glass-bg-dark: rgba(30, 41, 59, 0.85);
+        --glass-bg-light: rgba(255, 255, 255, 0.85);
+        --glass-border-dark: rgba(255, 255, 255, 0.1);
+        --glass-border-light: rgba(99, 102, 241, 0.1);
+    }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .dark {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        color: #e2e8f0;
+    }
+    
+    .light {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        color: #334155;
+    }
+    
+    /* Glass card with proper theme support */
+    .glass-card {
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border-dark);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .dark .glass-card {
+        background: var(--glass-bg-dark);
+        border-color: var(--glass-border-dark);
+    }
+    
+    .light .glass-card {
+        background: var(--glass-bg-light);
+        border-color: var(--glass-border-light);
+        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+    }
+    
+    .gradient-border {
+        position: relative;
+        border: 1px solid transparent;
+    }
+    
+    .dark .gradient-border {
+        background: linear-gradient(135deg, #0f172a, #1e1b4b) padding-box,
+                    linear-gradient(135deg, #6366f1, #8b5cf6) border-box;
+    }
+    
+    .light .gradient-border {
+        background: linear-gradient(135deg, #ffffff, #f8fafc) padding-box,
+                    linear-gradient(135deg, #6366f1, #8b5cf6) border-box;
+    }
+    
+    .neon-glow {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+    }
+    
+    .neon-glow:hover {
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+    }
+    
+    /* Sidebar with theme support */
+    .sidebar-glass {
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    
+    .dark .sidebar-glass {
+        background: rgba(15, 23, 42, 0.95);
+    }
+    
+    .light .sidebar-glass {
+        background: rgba(255, 255, 255, 0.95);
+        border-right: 1px solid rgba(99, 102, 241, 0.1);
+    }
+    
+    .nav-link {
+        transition: all 0.3s;
+        border-radius: 0.75rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+        transition: width 0.3s;
+    }
+    
+    .nav-link:hover::before {
+        width: 100%;
+    }
+    
+    .nav-link.active {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+        border-left: 4px solid #6366f1;
+    }
+    
+    .stat-card {
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .stat-card:hover::after {
+        opacity: 1;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    
+    /* Fixed input and select styling for both themes */
+    .input-dark, select {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: #e2e8f0;
+        backdrop-filter: blur(10px);
+    }
+    
+    .light .input-dark, .light select {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        color: #334155;
+    }
+    
+    select {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+    }
+    
+    .dark select option {
+        background: #1e293b;
+        color: #e2e8f0;
+    }
+    
+    .light select option {
+        background: #ffffff;
+        color: #334155;
+    }
+    
+    /* Chart buttons */
+    .chart-buttons button {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: #94a3b8;
+        transition: all 0.3s;
+    }
+    
+    .light .chart-buttons button {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        color: #64748b;
+    }
+    
+    .chart-buttons button:hover {
+        background: rgba(99, 102, 241, 0.2);
+        color: #6366f1;
+        border-color: #6366f1;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+        margin: 5% auto;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 1rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .dark .modal-content {
+        background: var(--glass-bg-dark);
+        border: 1px solid var(--glass-border-dark);
+    }
+    
+    .light .modal-content {
+        background: var(--glass-bg-light);
+        border: 1px solid var(--glass-border-light);
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(99, 102, 241, 0.3);
+        border-radius: 50%;
+        border-top-color: #6366f1;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+    
+    .success-toast {
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    /* Updated Logo styling */
+    .logo-img {
+        height: 60px;
+        width: auto;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .logo-img {
+        filter: brightness(0) invert(1);
+    }
+    
+    .light .logo-img {
+        filter: brightness(0) saturate(100%) invert(29%) sepia(79%) saturate(1656%) hue-rotate(229deg) brightness(97%) contrast(91%);
+    }
+    
+    .neuroface-gradient {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+    }
+    
+    .panel-text {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-align: center;
+        letter-spacing: 0.05em;
+    }
+    
+    .light .panel-text {
+        color: #64748b;
+    }
+    
+    /* Navbar styling with theme support */
+    .navbar {
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        z-index: 40;
+    }
+    
+    .dark .navbar {
+        background: rgba(15, 23, 42, 0.95);
+    }
+    
+    .light .navbar {
+        background: rgba(255, 255, 255, 0.95);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    }
+    
+    /* User dropdown with higher z-index */
+    .user-dropdown {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        z-index: 1000 !important; /* Increased z-index */
+    }
+    
+    .dark .user-dropdown {
+        background: rgba(30, 41, 59, 0.98);
+    }
+    
+    .light .user-dropdown {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(99, 102, 241, 0.1);
+    }
+    
+    /* Theme toggle button */
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    
+    .dark .theme-toggle {
+        background: rgba(99, 102, 241, 0.1);
+    }
+    
+    .light .theme-toggle {
+        background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .theme-toggle:hover {
+        background: rgba(99, 102, 241, 0.2);
+        transform: rotate(30deg);
+    }
+    
+    /* Logout button */
+    .logout-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    
+    .dark .logout-btn {
+        background: rgba(239, 68, 68, 0.1);
+    }
+    
+    .light .logout-btn {
+        background: rgba(239, 68, 68, 0.05);
+    }
+    
+    .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        transform: translateX(2px);
+    }
+    
+    /* Mobile menu improvements */
+    .mobile-menu {
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(99, 102, 241, 0.3);
+        z-index: 50;
+    }
+    
+    .dark .mobile-menu {
+        background: rgba(15, 23, 42, 0.98);
+    }
+    
+    .light .mobile-menu {
+        background: rgba(255, 255, 255, 0.98);
+    }
+    
+    /* Pulse animation for notifications */
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .dark ::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 4px;
+    }
+    
+    .light ::-webkit-scrollbar-track {
+        background: rgba(226, 232, 240, 0.5);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    }
+    
+    /* Table styling */
+    .dark table {
+        background: rgba(30, 41, 59, 0.5);
+    }
+    
+    .light table {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    /* Fix for notifications panel z-index */
+    #notificationsPanel {
+        z-index: 1001 !important;
+    }
+    
+    /* Improved button hover states */
+    button:not(.btn-primary):hover {
+        transform: translateY(-1px);
+    }
+    
+    /* Better text contrast in light mode */
+    .light .text-gray-400 {
+        color: #64748b;
+    }
+    
+    .light .text-indigo-300 {
+        color: #6366f1;
+    }
+    
+    /* Improved icon visibility */
+    .dark .fas {
+        color: #94a3b8;
+    }
+    
+    .light .fas {
+        color: #64748b;
+    }
+    
+    .dark .fa-user-shield {
+        color: #ffffff;
+    }
+    
+    .light .fa-user-shield {
+        color: #ffffff;
+    }
+    
+    /* Mobile header fixes */
+    .md\\:hidden.navbar {
+        z-index: 45;
+    }
+    
+    /* Ensure content doesn't overflow */
+    .flex-1.overflow-auto {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    /* Fix for stat card icons */
+    .stat-card .fas {
+        font-size: 1.75rem;
+    }
+    
+    /* Activity table row hover */
+    .dark tbody tr:hover {
+        background: rgba(99, 102, 241, 0.05);
+    }
+    
+    .light tbody tr:hover {
+        background: rgba(99, 102, 241, 0.03);
+    }
+    
+    /* DataTables Theme Fixes */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate {
+    color: inherit !important;
+}
+
+/* DataTables Length Select */
+.dataTables_wrapper select {
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.25rem 2rem 0.25rem 0.5rem !important;
+    margin: 0 0.5rem !important;
+}
+
+.light .dataTables_wrapper select {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    color: #334155 !important;
+}
+
+/* DataTables Search Input */
+.dataTables_wrapper input[type="search"] {
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 1rem 0.5rem 2.5rem !important;
+    margin-left: 0.5rem !important;
+}
+
+.light .dataTables_wrapper input[type="search"] {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    color: #334155 !important;
+}
+
+/* DataTables Pagination */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #e2e8f0 !important;
+    border-radius: 0.375rem !important;
+    margin: 0 0.125rem !important;
+}
+
+.light .dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    color: #334155 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+    border-color: #6366f1 !important;
+    color: white !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: rgba(99, 102, 241, 0.2) !important;
+    border-color: #6366f1 !important;
+    color: #6366f1 !important;
+}
+
+/* DataTables Table Styling */
+.dataTables_wrapper table.dataTable {
+    border-collapse: collapse !important;
+    width: 100% !important;
+}
+
+.dataTables_wrapper table.dataTable thead th {
+    border-bottom: 2px solid rgba(99, 102, 241, 0.3) !important;
+    padding: 0.75rem 1rem !important;
+}
+
+.dark .dataTables_wrapper table.dataTable thead th {
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    color: #e2e8f0 !important;
+}
+
+.light .dataTables_wrapper table.dataTable thead th {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #334155 !important;
+}
+
+.dataTables_wrapper table.dataTable tbody td {
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+
+.dark .dataTables_wrapper table.dataTable tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.05) !important;
+}
+
+.light .dataTables_wrapper table.dataTable tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.03) !important;
+}
+
+/* DataTables Length and Filter Labels */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    color: inherit !important;
+    font-weight: 500 !important;
+}
+
+.dark .dataTables_wrapper .dataTables_length label,
+.dark .dataTables_wrapper .dataTables_filter label {
+    color: #94a3b8 !important;
+}
+
+.light .dataTables_wrapper .dataTables_length label,
+.light .dataTables_wrapper .dataTables_filter label {
+    color: #64748b !important;
+}
+
+/* DataTables Info Text */
+.dataTables_wrapper .dataTables_info {
+    padding-top: 0.75rem !important;
+    color: inherit !important;
+}
+
+.dark .dataTables_wrapper .dataTables_info {
+    color: #94a3b8 !important;
+}
+
+.light .dataTables_wrapper .dataTables_info {
+    color: #64748b !important;
+}
+
+/* Fix for custom search inputs in sections */
+#searchInstitutes,
+#searchUsers {
+    background: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    color: #e2e8f0 !important;
+}
+
+.light #searchInstitutes,
+.light #searchUsers {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    color: #334155 !important;
+}
+
+/* Custom search icon color */
+.dark #searchInstitutes + .fa-search,
+.dark #searchUsers + .fa-search {
+    color: #94a3b8 !important;
+}
+
+.light #searchInstitutes + .fa-search,
+.light #searchUsers + .fa-search {
+    color: #64748b !important;
+}
