@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 
 from database import get_db
 from models.users import User
+from models.faculty import Faculty
 from models.institute import Institute
 from models.student import Student
 from schemas.users import UserCreate, UserProfileResponse, EmailUpdate, PasswordChange
@@ -28,6 +29,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     1. Email already exists in users table (prevent duplicate registration)
     2. Institute ID exists (for non-super admins)
     3. Email exists in student_details table (for institute verification)
+    Automatically links the generated user ID to student_details table.
     """
     
     # Check if user already exists with this email in users table
@@ -91,19 +93,34 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(new_user)
         
-        # Optional: Link student_id to user if found (for STUDENT role)
+        # Link user_id to student_details table for STUDENT role
         if user.role == "STUDENT" and user.institute_id:
             student = db.query(Student).filter(
                 (Student.institute_id == user.institute_id) &
                 (Student.email == user.email)
             ).first()
             
-            if student and student.student_id:
-                # Update user with student_id
-                new_user.student_id = student.student_id
+            if student:
+                # Update student_details with the generated user ID
+                student.user_id = new_user.id
+                
                 db.commit()
                 db.refresh(new_user)
+                db.refresh(student)
+                
+                return {
+                    "message": "User created and linked to student record successfully",
+                    "user_id": new_user.id,
+                    "student_id": student.student_id,
+                    "email": new_user.email,
+                    "role": new_user.role,
+                    "institute_id": new_user.institute_id,
+                    "is_active": new_user.is_active,
+                    "created_at": new_user.created_at,
+                    "student_details_linked": True
+                }
         
+        # For non-student roles or if student not found
         return {
             "message": "User created successfully",
             "user_id": new_user.id,
@@ -111,7 +128,8 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
             "role": new_user.role,
             "institute_id": new_user.institute_id,
             "is_active": new_user.is_active,
-            "created_at": new_user.created_at
+            "created_at": new_user.created_at,
+            "student_details_linked": False
         }
     except Exception as e:
         db.rollback()
@@ -196,9 +214,10 @@ def update_user_email(
     db: Session = Depends(get_db)
 ):
     """
-    Update current user's email only
+    Update current user's email and sync with faculty/institute tables if applicable
     """
     new_email = email_update.email.strip().lower()
+    old_email = current_user.email  # Store old email for matching
     
     if not new_email:
         raise HTTPException(
@@ -214,7 +233,7 @@ def update_user_email(
             detail="Invalid email format"
         )
     
-    # Check if new email already exists (excluding current user)
+    # Check if new email already exists in User table (excluding current user)
     existing_user = db.query(User).filter(
         User.email == new_email,
         User.id != current_user.id
@@ -223,22 +242,88 @@ def update_user_email(
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already in use"
+            detail="Email already in use by another user"
         )
     
-    # Update email
-    current_user.email = new_email
-    current_user.updated_at = datetime.utcnow()
-    db.commit()
-    
-    return {
-        "success": True,
-        "message": "Email updated successfully",
-        "data": {
-            "email": current_user.email
+    try:
+        # Start transaction
+        # Update User table
+        current_user.email = new_email
+        current_user.updated_at = datetime.utcnow()
+        
+        # Sync with Faculty table if user is faculty
+        if current_user.role == "FACULTY":
+            faculty = db.query(Faculty).filter(
+                Faculty.user_id == current_user.id
+            ).first()
+            
+            if faculty:
+                # Check if faculty email already exists (excluding current faculty)
+                existing_faculty = db.query(Faculty).filter(
+                    Faculty.email == new_email,
+                    Faculty.id != faculty.id
+                ).first()
+                
+                if existing_faculty:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Email already in use by another faculty member"
+                    )
+                
+                # Update faculty email
+                faculty.email = new_email
+                faculty.updated_at = datetime.utcnow()
+        
+        # Sync with InstituteDetails table if user is admin
+        elif current_user.role == "ADMIN":
+            # Find institute details by matching old email
+            institute_details = db.query(Institute).filter(
+                Institute.email == old_email  # Match by old email
+            ).first()
+            
+            if institute_details:
+                # Check if new email already exists in InstituteDetails
+                existing_institute = db.query(Institute).filter(
+                    Institute.email == new_email,
+                    Institute.institute_id != institute_details.institute_id
+                ).first()
+                
+                if existing_institute:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Email already in use by another institute"
+                    )
+                
+                # Update institute details email
+                institute_details.email = new_email
+                institute_details.updated_at = datetime.utcnow()
+                
+        
+        # Commit all changes
+        db.commit()
+        
+        # Refresh the current_user object to get updated data
+        db.refresh(current_user)
+        
+        return {
+            "success": True,
+            "message": "Email updated successfully",
+            "data": {
+                "email": current_user.email
+            }
         }
-    }
-
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        # Rollback on error
+        db.rollback()
+        print(f"Error updating email: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating email: {str(e)}"
+        )
 
 @router.post("/profile/change-password")
 def change_password(

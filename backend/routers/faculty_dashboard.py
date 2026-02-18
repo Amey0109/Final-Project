@@ -18,7 +18,7 @@ from models.attendance import Attendance
 from schemas.admin import FacultyDashboardStats, FacultyClassResponse, DashboardStats
 from schemas.student import StudentCreate, StudentResponse
 from schemas.admin import FacultyStudentResponse
-from routers.auth import get_current_user
+from routers.auth import get_faculty_user
 
 router = APIRouter(
     prefix="/api/faculty",
@@ -63,7 +63,7 @@ async def register_student_by_faculty_with_image(
     stream: Optional[str] = Form(None),
     image: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_faculty_user)
 ):
     """
     Register a new student with optional image upload
@@ -242,7 +242,7 @@ async def register_student_by_faculty_with_image(
 @router.get("/stats", response_model=FacultyDashboardStats)
 async def get_faculty_dashboard_stats(
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_faculty_user)
 ):
     """
     Get faculty-specific dashboard statistics
@@ -357,7 +357,7 @@ async def get_faculty_students(
     stream_filter: Optional[str] = Query(None, alias="stream"),
     search: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_faculty_user)
 ):
     """
     Get students assigned to the current faculty member
@@ -447,7 +447,7 @@ async def update_student_by_faculty(
     student_id: int,
     student_update: StudentCreate,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_faculty_user)
 ):
     """
     Update student information (only for faculty's assigned students)
@@ -545,7 +545,7 @@ async def update_student_by_faculty(
 async def delete_student_completely(
     student_id: int,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_faculty_user)
 ):
     """
     Completely delete a student from all tables (hard delete)

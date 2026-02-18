@@ -225,6 +225,80 @@
         .password-toggle:hover {
             color: #6366f1;
         }
+        /* Phone validation styles */
+.phone-input-container {
+    position: relative;
+}
+
+.phone-validation {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.phone-validation.valid {
+    color: #10b981;
+}
+
+.phone-validation.invalid {
+    color: #ef4444;
+}
+
+.phone-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(177, 18, 18, 0.95);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 0.5rem;
+    margin-top: 0.25rem;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.phone-suggestion-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.phone-suggestion-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.country-code-selector {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e8e8e8;
+}
+
+.country-code-selector select {
+    background: #1d1d1d;
+    border: none;
+    color: rgb(242, 242, 242);
+    appearance: none;
+    cursor: pointer;
+}
+
+.country-code-selector select:focus {
+    outline: none;
+}
+
+.country-flag {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+}
     </style>
 </head>
 <body class="bg-black text-white">
@@ -336,10 +410,50 @@
                                 <label class="block text-sm font-medium text-gray-300 mb-2" for="phone">
                                     Phone Number <span class="text-red-400">*</span>
                                 </label>
-                                <input type="tel" id="phone" name="phone"
-                                       class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                                       placeholder="+91 98765 43210"
-                                       required>
+                                <div class="phone-input-container">
+                                    <input type="tel" id="phone" name="phone"
+                                        class="w-full px-24 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-32"
+                                        placeholder="98765 43210"
+                                        required
+                                        oninput="validatePhoneNumber()"
+                                        onblur="formatPhoneNumber()">
+                                    
+                                    <!-- Country Code Selector -->
+                                    <div class="country-code-selector">
+                                        <select id="countryCode" onchange="updateCountryCode()" class="text-sm">
+                                            <option value="+91" selected>+91 IN</option>
+                                            <option value="+1" >+1 US</option>
+                                            <option value="+44">+44 UK</option>
+                                            <option value="+61">+61 AU</option>
+                                            <option value="+65">+65 SG</option>
+                                            <option value="+971">+971 AE</option>
+                                            <option value="+60">+60 MY</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Validation Message -->
+                                <div id="phoneValidation" class="phone-validation"></div>
+                                
+                                <!-- Suggestions Container -->
+                                <div id="phoneSuggestions" class="phone-suggestions"></div>
+                                
+                                <!-- Custom Country Code Input (hidden by default) -->
+                                <div id="customCountryCodeContainer" class="mt-2 hidden">
+                                    <label class="block text-xs font-medium text-gray-400 mb-1">
+                                        Custom Country Code
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input type="text" id="customCountryCode" 
+                                            class="w-24 px-3 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-indigo-500"
+                                            placeholder="+123"
+                                            maxlength="5">
+                                        <input type="text" id="customPhoneNumber"
+                                            class="flex-1 px-3 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-indigo-500"
+                                            placeholder="Phone number">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1071,6 +1185,11 @@
                 alert('Passwords do not match. Please confirm your password.');
                 isValid = false;
             }
+            if (!validatePhoneNumber()) {
+                alert('Please enter a valid phone number.');
+                document.getElementById('phone').focus();
+                return;
+            }
             
             if (!isValid) {
                 alert('Please fill in all required fields and ensure passwords meet requirements.');
@@ -1274,7 +1393,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-center mb-4 text-white">🎉 Registration Successful!</h3>
+                    <h3 class="text-2xl font-bold text-center mb-4 text-white">Registration Successful!</h3>
                     <p class="text-gray-300 text-center mb-6">
                         Thank you for registering with NeuroFace AI. Your account has been created and activated.
                     </p>
@@ -1331,6 +1450,260 @@
             validatePassword();
             validatePasswordMatch();
         });
+        // Phone validation state
+let currentCountryCode = '+91';
+let phoneSuggestions = [];
+
+// Country code data
+const countryCodes = {
+    '+91': { name: 'India', pattern: /^(\+91)?[6-9]\d{9}$/, format: '+91 XXXXX XXXXX', example: '+91 98765 43210' },
+    '+1': { name: 'USA/Canada', pattern: /^(\+1)?[2-9]\d{9}$/, format: '+1 (XXX) XXX-XXXX', example: '+1 (555) 123-4567' },
+    '+44': { name: 'UK', pattern: /^(\+44)?7\d{9}$/, format: '+44 XX XXXX XXXX', example: '+44 79 1234 5678' },
+    '+61': { name: 'Australia', pattern: /^(\+61)?4\d{8}$/, format: '+61 4XX XXX XXX', example: '+61 412 345 678' },
+    '+65': { name: 'Singapore', pattern: /^(\+65)?[89]\d{7}$/, format: '+65 XXXX XXXX', example: '+65 8123 4567' },
+    '+971': { name: 'UAE', pattern: /^(\+971)?5\d{8}$/, format: '+971 5X XXX XXXX', example: '+971 50 123 4567' },
+    '+60': { name: 'Malaysia', pattern: /^(\+60)?1\d{8,9}$/, format: '+60 1X-XXXX XXXX', example: '+60 12-345 6789' }
+};
+
+function updateCountryCode() {
+    const select = document.getElementById('countryCode');
+    const customContainer = document.getElementById('customCountryCodeContainer');
+    const phoneInput = document.getElementById('phone');
+    
+    if (select.value === 'other') {
+        customContainer.classList.remove('hidden');
+        phoneInput.classList.add('hidden');
+        currentCountryCode = '';
+    } else {
+        customContainer.classList.add('hidden');
+        phoneInput.classList.remove('hidden');
+        currentCountryCode = select.value;
+        phoneInput.placeholder = countryCodes[currentCountryCode]?.example.split(' ')[1] || 'Enter phone number';
+        validatePhoneNumber();
+    }
+}
+
+function validatePhoneNumber() {
+    const phoneInput = document.getElementById('phone');
+    const validationElement = document.getElementById('phoneValidation');
+    const suggestionsElement = document.getElementById('phoneSuggestions');
+    let phoneNumber = phoneInput.value.trim();
+    
+    // Clear previous validation
+    validationElement.textContent = '';
+    validationElement.className = 'phone-validation';
+    suggestionsElement.style.display = 'none';
+    phoneInput.classList.remove('border-red-500', 'border-green-500');
+    
+    if (!phoneNumber) {
+        return false;
+    }
+    
+    // Remove all non-digits except plus sign
+    let cleanedNumber = phoneNumber.replace(/[^\d\+]/g, '');
+    
+    // Check if number already includes country code
+    let numberToValidate = cleanedNumber;
+    if (!cleanedNumber.startsWith('+')) {
+        numberToValidate = currentCountryCode + cleanedNumber;
+    }
+    
+    // Get country code info
+    const countryInfo = countryCodes[currentCountryCode];
+    let isValid = false;
+    let formattedNumber = '';
+    let message = '';
+    
+    if (countryInfo) {
+        // Test against country pattern
+        isValid = countryInfo.pattern.test(numberToValidate);
+        
+        if (isValid) {
+            // Format the number
+            formattedNumber = formatPhoneForCountry(numberToValidate, currentCountryCode);
+            message = `✓ Valid ${countryInfo.name} number`;
+            phoneInput.classList.add('border-green-500');
+            validationElement.classList.add('valid');
+            
+            // Update input with formatted number
+            phoneInput.value = formattedNumber.replace(currentCountryCode + ' ', '');
+        } else {
+            message = `Please enter a valid ${countryInfo.name} phone number`;
+            phoneInput.classList.add('border-red-500');
+            validationElement.classList.add('invalid');
+            
+            // Show suggestions for corrections
+            showPhoneSuggestions(cleanedNumber);
+        }
+    } else {
+        // Generic validation for other countries
+        isValid = /^\+?[1-9]\d{1,14}$/.test(numberToValidate);
+        if (isValid && numberToValidate.length >= 8 && numberToValidate.length <= 15) {
+            message = '✓ Valid phone number';
+            phoneInput.classList.add('border-green-500');
+            validationElement.classList.add('valid');
+        } else {
+            message = 'Please enter a valid phone number (8-15 digits)';
+            phoneInput.classList.add('border-red-500');
+            validationElement.classList.add('invalid');
+        }
+    }
+    
+    validationElement.textContent = message;
+    return isValid;
+}
+
+function formatPhoneNumber() {
+    const phoneInput = document.getElementById('phone');
+    let phoneNumber = phoneInput.value.trim();
+    
+    if (!phoneNumber) return;
+    
+    // Remove all non-digits
+    let digits = phoneNumber.replace(/\D/g, '');
+    
+    // Format based on country code
+    const countryInfo = countryCodes[currentCountryCode];
+    
+    if (countryInfo) {
+        let formatted = '';
+        const formatPattern = countryInfo.format.split(' ')[1] || 'XXXXXXXXXX';
+        
+        switch (currentCountryCode) {
+            case '+91': // India
+                if (digits.length <= 5) {
+                    formatted = digits;
+                } else if (digits.length <= 10) {
+                    formatted = digits.replace(/(\d{5})(\d+)/, '$1 $2');
+                }
+                break;
+                
+            case '+1': // US/Canada
+                if (digits.length <= 3) {
+                    formatted = digits;
+                } else if (digits.length <= 6) {
+                    formatted = digits.replace(/(\d{3})(\d+)/, '($1) $2');
+                } else {
+                    formatted = digits.replace(/(\d{3})(\d{3})(\d+)/, '($1) $2-$3');
+                }
+                break;
+                
+            case '+44': // UK
+                if (digits.length <= 2) {
+                    formatted = digits;
+                } else if (digits.length <= 6) {
+                    formatted = digits.replace(/(\d{2})(\d+)/, '$1 $2');
+                } else {
+                    formatted = digits.replace(/(\d{2})(\d{4})(\d+)/, '$1 $2 $3');
+                }
+                break;
+                
+            default:
+                // Generic formatting: add space after every 4 digits
+                formatted = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+        }
+        
+        phoneInput.value = formatted;
+    }
+}
+
+function formatPhoneForCountry(phoneNumber, countryCode) {
+    let digits = phoneNumber.replace(/\D/g, '');
+    
+    switch (countryCode) {
+        case '+91': // India: +91 XXXXX XXXXX
+            return `+91 ${digits.substring(0, 5)} ${digits.substring(5, 10)}`;
+            
+        case '+1': // US/Canada: +1 (XXX) XXX-XXXX
+            return `+1 (${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6, 10)}`;
+            
+        case '+44': // UK: +44 XX XXXX XXXX
+            return `+44 ${digits.substring(0, 2)} ${digits.substring(2, 6)} ${digits.substring(6, 10)}`;
+            
+        case '+61': // Australia: +61 4XX XXX XXX
+            return `+61 ${digits.substring(0, 3)} ${digits.substring(3, 6)} ${digits.substring(6, 9)}`;
+            
+        case '+65': // Singapore: +65 XXXX XXXX
+            return `+65 ${digits.substring(0, 4)} ${digits.substring(4, 8)}`;
+            
+        default:
+            return `+${digits}`;
+    }
+}
+
+function showPhoneSuggestions(inputDigits) {
+    const suggestionsElement = document.getElementById('phoneSuggestions');
+    const countryInfo = countryCodes[currentCountryCode];
+    
+    if (!countryInfo || inputDigits.length < 4) {
+        suggestionsElement.style.display = 'none';
+        return;
+    }
+    
+    let suggestions = [];
+    
+    // Generate suggestions for common errors
+    if (currentCountryCode === '+91') {
+        // Indian number suggestions
+        if (inputDigits.length === 10) {
+            suggestions = [
+                `+91 ${inputDigits.substring(0, 5)} ${inputDigits.substring(5)}`,
+                `+91 ${inputDigits}`
+            ];
+        } else if (inputDigits.length < 10) {
+            suggestions = [
+                `Add ${10 - inputDigits.length} more digit(s)`,
+                `Example: ${countryInfo.example}`
+            ];
+        } else {
+            suggestions = [
+                `Remove ${inputDigits.length - 10} extra digit(s)`,
+                `Example: ${countryInfo.example}`
+            ];
+        }
+    }
+    
+    if (suggestions.length > 0) {
+        suggestionsElement.innerHTML = suggestions.map(suggestion => 
+            `<div class="phone-suggestion-item" onclick="applyPhoneSuggestion('${suggestion.replace(currentCountryCode + ' ', '')}')">
+                ${suggestion}
+            </div>`
+        ).join('');
+        suggestionsElement.style.display = 'block';
+    } else {
+        suggestionsElement.style.display = 'none';
+    }
+}
+
+function applyPhoneSuggestion(suggestion) {
+    const phoneInput = document.getElementById('phone');
+    const suggestionsElement = document.getElementById('phoneSuggestions');
+    
+    phoneInput.value = suggestion;
+    suggestionsElement.style.display = 'none';
+    validatePhoneNumber();
+}
+
+// Add this to your DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+    
+    // Initialize phone validation
+    updateCountryCode();
+    
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(event) {
+        const suggestions = document.getElementById('phoneSuggestions');
+        const phoneInput = document.getElementById('phone');
+        
+        if (!phoneInput.contains(event.target) && !suggestions.contains(event.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+    
+    // Also validate phone when country code changes
+    document.getElementById('countryCode').addEventListener('change', validatePhoneNumber);
+});
     </script>
 </body>
 </html>

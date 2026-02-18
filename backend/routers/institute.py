@@ -8,6 +8,7 @@ from utils.hashing import hash_password
 from database import get_db
 from models.institute import Institute
 from models.users import User
+from routers.auth import get_super_admin_user
 from schemas.institute import InstituteCreate, InstituteUpdate, InstituteResponse
 
 router = APIRouter(prefix="/institutes", tags=["Institute"])

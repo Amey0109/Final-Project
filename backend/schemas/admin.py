@@ -165,7 +165,7 @@ class StudentResponse(BaseModel):
     student_id: int
     roll_no: str
     full_name: str
-    class_name: Optional[str]
+    standard: Optional[str]
     stream: Optional[str]
     image_folder: Optional[str]
     email: Optional[str]
@@ -188,9 +188,8 @@ class AttendanceResponse(BaseModel):
     student_name: str
     roll_no: str
     class_name: Optional[str]
+    stream: Optional[str]
     attendance_date: date
-    status: str
-    recorded_by: Optional[str]
     institute_id: str
     created_at: datetime
     

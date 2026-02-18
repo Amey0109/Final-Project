@@ -7,7 +7,7 @@ import calendar
 from typing import Optional, List
 from database import get_db
 from models import Attendance, Student, User
-from routers.auth import get_current_user
+from routers.auth import get_student_user
 
 router = APIRouter(prefix="/api/student", tags=["student"])
 
@@ -118,7 +118,7 @@ def get_student_attendance_for_date_range(
 
 @router.get("/dashboard/stats")
 async def get_student_attendance_stats(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_student_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -324,7 +324,7 @@ async def get_student_attendance_records(
     year: Optional[int] = None,
     page: int = 1,
     limit: int = 10,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_student_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -454,7 +454,7 @@ async def get_student_attendance_records(
 async def get_monthly_attendance_calendar(
     year: int,
     month: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_student_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -581,7 +581,7 @@ async def get_monthly_attendance_calendar(
 
 @router.get("/profile")
 async def get_student_profile(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_student_user),
     db: Session = Depends(get_db)
 ):
     """

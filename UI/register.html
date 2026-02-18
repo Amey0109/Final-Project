@@ -249,21 +249,7 @@
                     </p>
                 </div>
             </div>
-
-            <!-- AI Visualization Image -->
-            <div class="absolute right-0 top-1/3 transform -translate-y-1/2 translate-x-1/4">
-                <div class="relative w-80 h-80">
-                    <div class="ai-scan rounded-full overflow-hidden w-full h-full">
-                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" 
-                             alt="AI Facial Recognition"
-                             class="w-full h-full object-cover rounded-full">
-                    </div>
-                    
-                    <!-- Animated Rings -->
-                    <div class="absolute inset-0 border-2 border-indigo-500/30 rounded-full animate-ping"></div>
-                    <div class="absolute inset-4 border-2 border-purple-500/30 rounded-full animate-pulse"></div>
-                </div>
-            </div>
+            
 
             <!-- Stats at Bottom -->
             <div class="absolute bottom-10 left-10 z-10">
@@ -461,14 +447,15 @@ document.getElementById('loginFormElement').addEventListener('submit', async fun
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: new URLSearchParams({
-                username: email,
+            body: JSON.stringify({
+                email: email,
                 password: password,
                 grant_type: 'password'
             })
         });
+
 
         const responseData = await response.json();
 
@@ -796,8 +783,6 @@ document.addEventListener('DOMContentLoaded', function() {
         particle.style.backgroundColor = `rgba(99, 102, 241, ${Math.random() * 0.3 + 0.1})`;
         container.appendChild(particle);
     }
-    
-
 });
 </script>
 </body>

@@ -21,41 +21,13 @@ from schemas.admin import(
     BulkAttendanceCreate, AttendanceStats, WeeklyTrendItem,
     ExportRequest
 )
-from routers.auth import get_current_user
+from routers.auth import get_institute_admin
 from utils.hashing import hash_password
 from utils.reports_generator import ReportGenerator
 router = APIRouter(
     prefix="/api/admin",
     tags=["Admin Dashboard"]
 )
-
-async def get_institute_admin(
-    current_user: User = Depends(get_current_user)
-) -> User:
-    """
-    Dependency to ensure user is specifically an INSTITUTE ADMIN (not SUPER_ADMIN)
-    """
-    if current_user.role not in ["ADMIN", "FACULTY"]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied. Institute Admin privileges required."
-        )
-    
-    # Check if user account is active
-    if not current_user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your account is inactive. Please contact administrator."
-        )
-    
-    # Check if institute is assigned
-    if not current_user.institute_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No institute assigned to your account."
-        )
-    
-    return current_user
 
 # ==================== DASHBOARD API ====================
 @router.get("/dashboard-stats", response_model=DashboardStats)
@@ -195,7 +167,7 @@ async def get_faculty_list(
     result = []
     for faculty in faculty_list:
         # Get assigned classes as strings
-        assigned_classes = db.query(FacultyClass.standard).filter(
+        assigned_classes = db.query(FacultyClass.class_name).filter(
             FacultyClass.faculty_id == faculty.id
         ).all()
         class_names = [cls[0] for cls in assigned_classes]  # Extract strings
@@ -626,7 +598,7 @@ async def get_student_details(
     
     return student
 
-# ==================== ATTENDANCE MANAGEMENT API ====================
+
 # ==================== ATTENDANCE MANAGEMENT API ====================
 @router.get("/attendance/daily", response_model=List[AttendanceResponse])
 async def get_daily_attendance(
@@ -655,7 +627,6 @@ async def get_daily_attendance(
                 class_name=student.standard,
                 stream=student.stream,
                 attendance_date=record.attendance_date,
-                recorded_by=record.recorded_by,
                 institute_id=record.institute_id,
                 created_at=record.created_at
             ))
@@ -860,9 +831,8 @@ async def export_reports(
                 "Email": student.email or "",
                 "Phone": student.phone or "",
                 "Status": student.status,
-                "Registered By": student.register_by or "",
-                "Register Date": student.register_date.strftime("%Y-%m-%d") if student.register_date else "",
-                "Created At": student.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                "Registered By": student.registered_by or "",
+                "Register Date": student.created_at.strftime("%Y-%m-%d") if student.created_at else ""
             })
     
     elif export_request.report_type == "faculty":
@@ -878,8 +848,6 @@ async def export_reports(
                 "Full Name": faculty.full_name,
                 "Email": faculty.email,
                 "Phone": faculty.phone or "",
-                "Employee ID": faculty.employee_id or "",
-                "Designation": faculty.designation or "",
                 "Status": faculty.status,
                 "Last Login": faculty.last_login.strftime("%Y-%m-%d %H:%M:%S") if faculty.last_login else "",
                 "Created At": faculty.created_at.strftime("%Y-%m-%d %H:%M:%S")

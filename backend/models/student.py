@@ -19,7 +19,7 @@ class Student(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=True)
     institute_id = Column(String(100), ForeignKey("institute_details.institute_id", ondelete="CASCADE"), nullable=False)
     
-    email = Column(String(255), nullable=True)
+    email = Column(String(255), ForeignKey("users.email", ondelete="CASCADE"), unique=True, nullable=True)
     phone = Column(String(20), nullable=True)
     status = Column(String(50), default="ACTIVE", nullable=False)
     is_active = Column(Boolean, default=True)

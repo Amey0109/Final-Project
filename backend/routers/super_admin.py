@@ -9,36 +9,15 @@ from io import BytesIO
 from database import get_db
 from models.users import User
 from models.institute import Institute
-from utils.jwt_handler import verify_token
-from routers.auth import oauth2_scheme, get_current_user
+from routers.auth import get_super_admin_user
 
 router = APIRouter(prefix="/api/super-admin", tags=["Super Admin"])
 
-# Dependency to check if user is super admin
-def get_super_admin(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
-    payload = verify_token(token)
 
-    if payload is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token"
-        )
-
-    user = db.query(User).filter(User.id == payload.get("user_id")).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
-        )
-
-    return user
 
 @router.get("/dashboard-stats")
 async def get_dashboard_stats(
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Get dashboard statistics for super admin"""
@@ -65,8 +44,8 @@ async def get_dashboard_stats(
     monthly_revenue = db.query(
         func.sum(
             case(
-                (Institute.subscription_plan == "monthly", 5000),  
-                (Institute.subscription_plan == "annual", 50000),  
+                (Institute.subscription_plan == "Monthly", 5000),  
+                (Institute.subscription_plan == "Annual", 50000),  
                 else_=0
             )
         )
@@ -104,12 +83,12 @@ async def get_dashboard_stats(
     
     # Subscription distribution - FIXED plan names
     monthly_plan = db.query(Institute).filter(
-        Institute.subscription_plan == "monthly",  # Changed from "Basic"
+        Institute.subscription_plan == "Monthly",  # Changed from "Basic"
         Institute.payment_status == "PAID"  # Only count paid subscriptions
     ).count()
     
     annual_plan = db.query(Institute).filter(
-        Institute.subscription_plan == "annual",  
+        Institute.subscription_plan == "Annual",  
         Institute.payment_status == "PAID"
     ).count()
     
@@ -124,8 +103,8 @@ async def get_dashboard_stats(
     pending_amount_query = db.query(
         func.sum(
             case(
-                (Institute.subscription_plan == "monthly", 5000),
-                (Institute.subscription_plan == "annual", 15000),
+                (Institute.subscription_plan == "Monthly", 5000),
+                (Institute.subscription_plan == "Annual", 50000),
                 else_=0
             )
         )
@@ -188,7 +167,7 @@ async def get_dashboard_stats(
 @router.get("/monthly-registrations")
 async def get_monthly_registrations(
     months: int = Query(12, ge=1, le=36),
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Get monthly institute registrations"""
@@ -234,7 +213,7 @@ async def get_monthly_registrations(
 
 @router.get("/subscription-distribution")
 async def get_subscription_distribution(
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Get subscription plan distribution"""
@@ -268,7 +247,7 @@ async def get_subscription_distribution(
 @router.get("/institute-usage")
 async def get_institute_usage(
     days: int = Query(30, ge=7, le=365),
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Get institute-wise AI usage (simplified)"""
@@ -287,7 +266,7 @@ async def get_institute_usage(
 
 @router.get("/institutes")
 async def get_all_institutes(
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Get all institutes with details"""
@@ -313,7 +292,7 @@ async def get_all_institutes(
 
 @router.get("/users")
 async def get_all_users(
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Get all users with institute details"""
@@ -339,7 +318,7 @@ async def get_all_users(
 @router.post("/institutes/{institute_id}/toggle-status")
 async def toggle_institute_status(
     institute_id: str,
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Activate/Deactivate an institute"""
@@ -364,7 +343,7 @@ async def toggle_institute_status(
 @router.post("/users/{user_id}/toggle-status")
 async def toggle_user_status(
     user_id: int,
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Activate/Deactivate a user"""
@@ -387,7 +366,7 @@ async def toggle_user_status(
 @router.post("/users/{user_id}/reset-password")
 async def reset_user_password(
     user_id: int,
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Reset user password to default"""
@@ -416,7 +395,7 @@ async def reset_user_password(
 @router.get("/export/institutes")
 async def export_institutes(
     format: str = Query("excel", regex="^(excel|csv|pdf)$"),
-    current_user: User = Depends(get_super_admin),
+    current_user: User = Depends(get_super_admin_user),
     db: Session = Depends(get_db)
 ):
     """Export institutes data"""
