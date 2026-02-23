@@ -44,8 +44,8 @@ async def get_dashboard_stats(
     monthly_revenue = db.query(
         func.sum(
             case(
-                (Institute.subscription_plan == "Monthly", 5000),  
-                (Institute.subscription_plan == "Annual", 50000),  
+                (Institute.subscription_plan == "monthly", 5000),  
+                (Institute.subscription_plan == "annual", 50000),  
                 else_=0
             )
         )
@@ -83,12 +83,12 @@ async def get_dashboard_stats(
     
     # Subscription distribution - FIXED plan names
     monthly_plan = db.query(Institute).filter(
-        Institute.subscription_plan == "Monthly",  # Changed from "Basic"
-        Institute.payment_status == "PAID"  # Only count paid subscriptions
+        Institute.subscription_plan == "monthly",  
+        Institute.payment_status == "PAID"  
     ).count()
     
     annual_plan = db.query(Institute).filter(
-        Institute.subscription_plan == "Annual",  
+        Institute.subscription_plan == "annual",  
         Institute.payment_status == "PAID"
     ).count()
     
@@ -220,12 +220,12 @@ async def get_subscription_distribution(
     
     # Count institutes by subscription plan (only paid ones)
     monthly_count = db.query(Institute).filter(
-        Institute.subscription_plan == "monthly" or Institute.subscription_plan == "Monthly",
+        Institute.subscription_plan == "monthly",
         Institute.payment_status == "PAID"
     ).count()
     
     annual_count = db.query(Institute).filter(
-        Institute.subscription_plan == "annual" or Institute.subscription_plan == "Annual",
+        Institute.subscription_plan == "annual",
         Institute.payment_status == "PAID"
     ).count()
     
